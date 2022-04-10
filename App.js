@@ -37,12 +37,40 @@ function renderWaewhere(item,index, setItem){
 
   return <List.Item onPress={()=>setItem(item)} title={item.name} description={item.time} ></List.Item>
 }
-
+function coverphoto(props){
+  var cover = "a";
+  if(props.item.code == "cov00"){
+    cover = require('./assets/cov00.jpg');
+  }
+  else if(props.item.code == "cov01"){
+    cover = require('./assets/cov01.jpg');
+  }
+  else if(props.item.code == "cov02"){
+    cover = require('./assets/cov02.jpg');
+  }
+  else if(props.item.code == "cov03"){
+    cover = require('./assets/cov03.jpg');
+  }
+  else{
+    cover = require('./assets/cov04.jpg');
+  }
+  return cover
+}
  
 function Detail(props){
-   
+  var cover = props.item.code;
    return <View>
-     <Text>{JSON.stringify(props.item)}</Text>
+     <Card >
+         <Card.Cover source={coverphoto(props)}></Card.Cover>
+      <Card.Title title={props.item.name} />
+      <Card.Content>
+        <Text>คำอธิบาย : {props.item.caption}</Text>
+        <Text>ตำแหน่งที่ตั้ง : {props.item.location}</Text>
+        <Text>เวลาที่ควรมา : {props.item.time}</Text>
+        <Text>กิจกรรมที่แนะนำ : {props.item.recommend}</Text>
+        <Text>แผนที่ : {props.item.map}</Text>
+      </Card.Content>
+      </Card>
      <Button  onPress={() => props.setItem(null) }>
       Back
       </Button>
@@ -70,7 +98,9 @@ export default function App() {
   if (user == null) {
     return <LoginScreen/>;
   }
- 
+  if (waewhere.length == 0) {
+    return <Loading />;
+  }
  
   if(citem!=null){
     return <Detail item={citem} setItem={setCitem} />;
@@ -117,6 +147,10 @@ const styles = StyleSheet.create({
   scroll:{
     maxHeight:"100%",
     backgroundColor: '#E8FEFE',
+  },
+  Image:{
+    width:200,
+    height:120,
   }
 });
 
