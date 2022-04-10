@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { StatusBar } from 'expo-status-bar';
 import {
   Text,
   View,
@@ -6,7 +7,7 @@ import {
   Button,
   StyleSheet,
   TouchableOpacity,
-  Platform,
+  Platform,Image
 } from 'react-native';
 import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
 import { initializeApp, getApp } from 'firebase/app';
@@ -24,26 +25,29 @@ export default function LoginScreen() {
   const firebaseConfig = app ? app.options : undefined;
   const [message, showMessage] = React.useState();
   const attemptInvisibleVerification = false;
- 
   return (
-    <View style={{ padding: 20, marginTop: 50 }}>
+    
+    <View >
+      
       <FirebaseRecaptchaVerifierModal
         ref={recaptchaVerifier}
         firebaseConfig={app.options}
         // attemptInvisibleVerification
       />
-      <Text style={{ marginTop: 20 }}>Enter phone number</Text>
+      <Image style={styles.Image} source={require('./assets/Logo-Login.png')}/>
+      <View style={styles.content}>
+      <Text style={{ marginTop: 20 }}>กรอกหมายเลขโทรศัพท์ :</Text>
       <TextInput
         style={{ marginVertical: 10, fontSize: 17 }}
-        placeholder="+1 999 999 9999"
+        placeholder="+66 999 999 9999"
         autoFocus
         autoCompleteType="tel"
         keyboardType="phone-pad"
         textContentType="telephoneNumber"
         onChangeText={phoneNumber => setPhoneNumber(phoneNumber)}
       />
-      <Button
-        title="Send Verification Code"
+      <Button color={"#CF8083"} style={styles.Button}
+        title="ส่งรหัสยืนยันตัวตนไปยังหมายเลขโทรศัพท์"
         disabled={!phoneNumber}
         onPress={async () => {
           // The FirebaseRecaptchaVerifierModal ref implements the
@@ -57,22 +61,22 @@ export default function LoginScreen() {
             );
             setVerificationId(verificationId);
             showMessage({
-              text: 'Verification code has been sent to your phone.',
+              text: 'รหัสยืนยันถูกส่งไปยัง'+{phoneNumber}+'เรียบร้อยแล้ว',
             });
           } catch (err) {
             showMessage({ text: `Error: ${err.message}`, color: 'red' });
           }
         }}
       />
-      <Text style={{ marginTop: 20 }}>Enter Verification code</Text>
+      <Text style={{ marginTop: 20 }}>กรอกรัหสยืนยันตัวตน </Text>
       <TextInput
         style={{ marginVertical: 10, fontSize: 17 }}
         editable={!!verificationId}
-        placeholder="123456"
+        placeholder="88150"
         onChangeText={setVerificationCode}
       />
-      <Button
-        title="Confirm Verification Code"
+      <Button color={"#CF8083"} style={styles.Button}
+        title="ยืนยันรหัสยืนยันตัวตน"
         disabled={!verificationId}
         onPress={async () => {
           try {
@@ -81,7 +85,7 @@ export default function LoginScreen() {
               verificationCode
             );
             await signInWithCredential(auth, credential);
-            showMessage({ text: 'Phone authentication successful 👍' });
+            showMessage({ text: 'ยืนยันตัวตนสำเร็จ 👍' });
           } catch (err) {
             showMessage({ text: `Error: ${err.message}`, color: 'red' });
           }
@@ -108,6 +112,22 @@ export default function LoginScreen() {
         undefined
       )}
       {attemptInvisibleVerification && <FirebaseRecaptchaBanner />}
+      </View>
+      <StatusBar backgroundColor="rgba(140,0,0,0.3)" style="light" barStyle="light-content"/>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  Image:{
+    width:"100%",
+    height:"40%",
+    marginTop:"10%",
+  },
+  content:{
+    padding:"5%", 
+    backgroundColor:"#FBE9DD",
+    height:"60%",
+    borderRadius:10
+  },
+});
